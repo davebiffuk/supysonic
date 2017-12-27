@@ -141,8 +141,14 @@ def cover_art():
     if not status:
         return res
 
-    if not res.has_cover_art or not os.path.isfile(os.path.join(res.path, 'cover.jpg')):
+    if not res.has_cover_art or (not os.path.isfile(os.path.join(res.path, 'cover.jpg'))
+            and not os.path.isfile(os.path.join(res.path, 'AlbumArt.jpg'))):
         return request.error_formatter(70, 'Cover art not found')
+
+    if os.path.isfile(os.path.join(res.path, 'cover.jpg')):
+        art_file = os.path.join(res.path, 'cover.jpg')
+    else:
+        art_file = os.path.join(res.path, 'AlbumArt.jpg')
 
     size = request.values.get('size')
     if size:
@@ -151,11 +157,11 @@ def cover_art():
         except:
             return request.error_formatter(0, 'Invalid size value')
     else:
-        return send_file(os.path.join(res.path, 'cover.jpg'))
+        return send_file(art_file)
 
-    im = Image.open(os.path.join(res.path, 'cover.jpg'))
+    im = Image.open(art_file)
     if size > im.size[0] and size > im.size[1]:
-        return send_file(os.path.join(res.path, 'cover.jpg'))
+        return send_file(art_file)
 
     size_path = os.path.join(app.config['WEBAPP']['cache_dir'], str(size))
     path = os.path.abspath(os.path.join(size_path, str(res.id)))

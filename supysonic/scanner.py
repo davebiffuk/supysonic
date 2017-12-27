@@ -99,7 +99,8 @@ class Scanner:
         folders = [ folder ]
         while folders:
             f = folders.pop()
-            f.has_cover_art = os.path.isfile(os.path.join(f.path, 'cover.jpg'))
+            f.has_cover_art = (os.path.isfile(os.path.join(f.path, 'cover.jpg'))
+                or os.path.isfile(os.path.join(f.path, 'AlbumArt.jpg')))
             folders += f.children
 
         folder.last_scan = int(time.time())
